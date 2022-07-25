@@ -20,7 +20,11 @@ on:
         description: 'parameter'
         required: false
         default: ''
-
+      ssh:
+        description: '当生成配置文件时是否使用ssh'
+        required: true
+        type: boolean
+        default: true
 env:
   REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
   TZ: Asia/Shanghai
