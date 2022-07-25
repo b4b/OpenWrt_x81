@@ -10,7 +10,20 @@ name: Build OpenWrt
 
 on: 
   repository_dispatch:
-
+    inputs:
+      output:
+        description: '选择编译固件还是生成配置文件'
+        required: true
+        type: choice
+        default: 'firmware'
+        options:
+          - firmware
+          - config
+      ssh:
+        description: '当生成配置文件时是否使用ssh'
+        required: true
+        type: boolean
+        default: true
 env:
   REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
   PPPOE_USERNAME: ${{ secrets.PPPOE_USERNAME }}
@@ -183,8 +196,11 @@ jobs:
         cat .config
 
     - name: SSH connection to Actions
-      uses: kiddin9/debugger-action@master
-      if: contains(github.event.action, 'ssh')
+      uses: P3TERX/ssh2actions@v1.0.0
+      if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
+      env:
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
 
     - name: Download package
       id: package
